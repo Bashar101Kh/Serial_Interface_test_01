@@ -1,9 +1,8 @@
 #include "Initialisierung.h"
+#include "Datenuebertragung.h"
 
 void setup()
-{
-  
-}
+{}
 
 void loop()
 {
@@ -52,11 +51,28 @@ void loop()
       //
       // Analogeingäng einlesen
       //
-      for(i;i<8;i++)
+      for(i;i<AnalogAnzahl;i++)
       {
         val[i]=analogRead(pin);
-        volt[i]=map(val[i],0,1023,0,500);
-        Serial.println(volt[i]/100.0);
+        volt[i]=map(val[i],0,1023,0,Referenzspannung*100);
+        if((i==0)|((i%2)==0))
+        {
+          Serial.print(i,HEX);
+          if((Maximalspannung/Referenzspannung*(volt[i]/100.0))<10)
+          {
+            Serial.print(0);
+          }
+          Serial.println(Maximalspannung/Referenzspannung*(volt[i]/100.0));
+        }
+        else
+        {
+          Serial.print(i,HEX);
+          if((Maximalstrom/Referenzspannung*(volt[i]/100.0))<10)
+          {
+            Serial.print(0);
+          }
+          Serial.println(Maximalstrom/Referenzspannung*(volt[i]/100.0));
+        }
         if((volt[i]/100.0)<1)
         {
           Fehler=true;
@@ -74,7 +90,7 @@ void loop()
       }
       else
       {
-        pin=32;
+        pin=AnalogStartPin;
         delay(500);
         Zustand=1;
         TimerStart();

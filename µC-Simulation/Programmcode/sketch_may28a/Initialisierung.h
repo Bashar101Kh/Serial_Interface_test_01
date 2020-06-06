@@ -10,7 +10,9 @@ LiquidCrystal_I2C lcd(0x27,20,4);  // LCD Adresse ist 0x27, 16 Zeichen und 2 Zei
 //Variablen Deklaration
 //
 int InterruptPin = PB2; //Externer Interrupt an Pin PB2 wird verwendet
-int val[8], volt[8], pin=32, Zustand=0,i=0;
+int val[8], volt[8], pin=34, Zustand=0,i=0;
+static int AnalogAnzahl=6,AnalogStartPin=32;
+static double Referenzspannung=5.0, Maximalspannung=15.0, Maximalstrom=6.0;
 bool Starttaster=false, Fehler=false;
 
 void InitializeTimers()
@@ -62,12 +64,12 @@ void InitializePorts()
   //
   // Analogeingänge konfigurieren
   //
-  for(int i=0;i<8;i++)
+  for(int i=0;i<AnalogAnzahl;i++)
   {
     pinMode(pin,INPUT);
     pin++;
   }
-  pin=32;
+  pin=AnalogStartPin;
 }
 
 void TimerStart()
