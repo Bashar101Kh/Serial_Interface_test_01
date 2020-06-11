@@ -29,22 +29,29 @@ public:
 
 public slots:
     void showMsg(QString, int t);
-    void open_com_dialog();
-    void new_data_available();
-
-
-private slots:
+    void openComDialog();
+    void newDataAvailable();
     void on_pushButton_clicked();
+    void process_rxData();
+    void plottData();
+
+
+signals:
+    void rxData_changed();
+
 
 private:
     Ui::MainWindow *ui;
     QSerialPort *sp;
+    QByteArray rxdataRow,messureSeries,voltages,currents,powers;
+    int iX;
     QChart *createLineChart() const;
-    QSplineSeries *series1,*series2;
     QChart *chart1 , *chart2;
-
-
-
+    QSplineSeries *series1,*series2;
 
 };
+
+
+
+
 #endif // MAINWINDOW_H

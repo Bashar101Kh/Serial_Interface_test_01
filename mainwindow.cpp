@@ -38,10 +38,15 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+
 {
     ui->setupUi(this);
     MainWindow::sp = new QSerialPort(this);
+    dw.set_serialport(sp);
+    iX = 0;
 
+
+//       sp = dw.sp1;
 //    QChartView *chartView;
 //    chart1 = createLineChart();
 //    chartView = new QChartView(chart1);
@@ -56,11 +61,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     chart1 = new QChart();
     chart1->setTitle("Solar Modul 1.");
-    series1 = new QSplineSeries(chart1);
-//    series1->append(1,1);
+    series1 = new QSplineSeries();
+    series2 = new QSplineSeries();
+    series1->setName("Spannung");
+    series2->setName("Leistung");
+    //series1 = new QSplineSeries(chart1);
     chart1->addSeries(series1);
+    chart1->addSeries(series2);
+
+    //chart1->addSeries(series2);
     chart1->createDefaultAxes();
-    chart1->axes(Qt::Horizontal).first()->setRange(0, 120);
+    chart1->axes(Qt::Horizontal).first()->setRange(0, 24);
     chart1->axes(Qt::Vertical).first()->setRange(0, 12);
     QChartView *chartView;
     chartView = new QChartView(chart1);
@@ -68,7 +79,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->gridLayout->addWidget(chartView,1,0);
 
 
-    connect(ui->actionCOM_Port_Config,&QAction::triggered,this,&MainWindow::open_com_dialog);
+//    QPalette pal = window()->palette();
+//    pal.setColor(QPalette::Window, QRgb(0x121218));
+//    pal.setColor(QPalette::WindowText, QRgb(0xd6d6d6));
+//    window()->setPalette(pal);
+//    chart1->setTheme(QChart::ChartThemeDark);
+//    ui->menubar->setPalette(pal);
+
+    connect(ui->actionCOM_Port_Config,&QAction::triggered,this,&MainWindow::openComDialog);
+    connect(sp,SIGNAL(readyRead()),this, SLOT(newDataAvailable()));
 
 }
 
@@ -81,10 +100,56 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::new_data_available(){
-    qDebug() << sp->readAll();
+void MainWindow::newDataAvailable(){
+    rxdataRow += sp->readAll();
+    qDebug() << "MAINWINDOW RX : "<< rxdataRow;
+    process_rxData();
 }
-void MainWindow::open_com_dialog(){
+void MainWindow::process_rxData(){
+    if (rxdataRow.size() > 5){
+        int id;
+        QString telegramm,value;
+        telegramm = rxdataRow.left(6);
+        id = telegramm.left(1).toInt();
+        qDebug()<<id<<" | "<< telegramm.mid(1,5);
+        value = rxdataRow.mid(1,5);
+        switch(id){
+        case 0:         // Voltage Value [V]
+
+            voltages.append(value);
+            value += " Volt";
+        break;
+
+        case 1:         // Current Value [I]
+            currents.append(value);
+            value += " Amper";
+            plottData();
+        break;
+
+        case 2:
+            //powers.append(value);
+            value += " Watt";
+        break;
+
+        default:
+            ;
+        }
+        iX++;
+
+        qDebug()<< "value"<< value;
+        rxdataRow.remove(0,6);
+
+    }
+}
+void MainWindow::plottData()
+{
+    qDebug()<< "plotting ....."<<voltages.right(5).toDouble() <<"   "<< currents.right(5).toDouble();
+    series1->append(voltages.right(5).toDouble(), currents.right(5).toDouble());
+    double p = voltages.right(5).toDouble()*currents.right(5).toDouble();
+    series2->append(voltages.right(5).toDouble(), p/10.0 /*powers.right(5).toDouble()/10.0*/);
+}
+
+void MainWindow::openComDialog(){
     dw.setModal(true);
     dw.exec();
 }
@@ -125,10 +190,13 @@ QChart *MainWindow::createLineChart() const
 
 void MainWindow::on_pushButton_clicked()
 {
-    qDebug()<< "\nSeries size befor: "<<series1->points().size();
-    qDebug()<< "added Point: ("<<ui->lineEdit->text().toDouble()<<","<<ui->lineEdit_2->text().toDouble() <<")";
+//    qDebug()<< "\nSeries size befor: "<<series1->points().size();
+//    qDebug()<< "added Point: ("<<ui->lineEdit->text().toDouble()<<","<<ui->lineEdit_2->text().toDouble() <<")";
 
-    series1->append(ui->lineEdit->text().toDouble(),ui->lineEdit_2->text().toDouble());
-    chart1->update();
-    qDebug()<<  "Series size after: "<< series1->points().size();
+//    series1->append(ui->lineEdit->text().toDouble(),ui->lineEdit_2->text().toDouble());
+//    chart1->update();
+//    qDebug()<<  "Series size after: "<< series1->points().size();
+    series1->clear();
+    series2->clear();
+
 }

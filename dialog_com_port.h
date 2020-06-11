@@ -19,6 +19,7 @@ public:
     explicit Dialog_COM_Port(QWidget *parent = nullptr);
     void set_serialport(QSerialPort *sp);
     void port_setings_init();
+
     ~Dialog_COM_Port();
 
 signals:
@@ -34,6 +35,13 @@ private:
     Ui::Dialog_COM_Port *ui;
     QList<QSerialPortInfo> ap;      // available Ports
     QSerialPort *sp1;               // serial Port
+    struct currentComParam{
+        QString comPort;
+        QString Baudrat;
+        QString Databits;
+        QString Parity;
+        QString Stopbits;
+    };
 };
 
 #endif // DIALOG_COM_PORT_H

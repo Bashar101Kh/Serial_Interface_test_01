@@ -16,7 +16,6 @@ Dialog_COM_Port::Dialog_COM_Port(QWidget *parent) :
     ui->setupUi(this);
     sp1 = new QSerialPort;
     ap = QSerialPortInfo::availablePorts();
-
     ui->combo_comList->addItem(" " );
     for (int i = 0 ; i<ap.length() ; i++){
         qDebug() << ap.at(i).portName();
@@ -24,7 +23,6 @@ Dialog_COM_Port::Dialog_COM_Port(QWidget *parent) :
     }
 
     port_setings_init();
-    qDebug()<< "Dialog_COM_Port CONSTRUCTED!";
 
 }
 void Dialog_COM_Port::port_setings_init(){
@@ -71,13 +69,12 @@ void Dialog_COM_Port::on_toggle_open_button_clicked()
     if(ui->toggle_open_button->text() == "Open Port"){
                 qDebug() << "Connect Clicked !" ;
                 if (ui->combo_comList->currentIndex() != 0){
-                    //sp->setPort(ui->combo_comlist->currentText());
                     sp1->setPort(ap.at(ui->combo_comList->currentIndex()-1));
-                    sp1->setBaudRate(ui->combo_baudrate->currentIndex()-1);
-                    qDebug() << " opening "<< sp1->portName() <<" Port..... result:" <<sp1->open(QIODevice::ReadOnly);
+                    qDebug() << " opening "<< sp1->portName() <<" Port..... result:" <<sp1->open(QIODevice::ReadWrite);
+                    sp1->setBaudRate(ui->combo_baudrate->currentText().toInt(),QSerialPort::AllDirections);
                     if ( sp1->isOpen()){
                        ui->toggle_open_button->setText("Close Port");
-                        connect(sp1,SIGNAL(readyRead()),this, SLOT(new_data_available()));
+
                         qDebug()<< sp1->baudRate();
                         qDebug()<< sp1->parity();
                         qDebug()<< sp1->dataBits();
@@ -108,10 +105,8 @@ void Dialog_COM_Port::on_combo_comList_currentIndexChanged(const QString &arg1)
     qDebug()<< ap.length();
     qDebug()<< ui->combo_comList->currentIndex();
 
-
 }
 void Dialog_COM_Port::new_data_available(){
-    qDebug()<< sp1->readLine().toHex();
-
-
+//    rxData.append(sp1->readAll());
+//    qDebug() << rxData;
 }

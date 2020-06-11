@@ -3,10 +3,10 @@
 
 #include<QByteArray>
 
- class Port_Reader
+ class Port_Read_bufer
 {
 public:
-    Port_Reader();
+    Port_Read_bufer();
 private:
     QByteArray rx_data;
 };

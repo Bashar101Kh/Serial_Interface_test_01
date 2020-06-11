@@ -20,8 +20,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     dialog_com_port.cpp \
     main.cpp \
-    mainwindow.cpp \
-    port_reader.cpp
+    mainwindow.cpp
 
 HEADERS += \
     dialog_com_port.h \
