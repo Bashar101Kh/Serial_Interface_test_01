@@ -210,12 +210,14 @@ void MainWindow::plottData(int panel_id)
         s_Ivalue = S1_currents.left(4);
         d_Vvalue = s_Vvalue.toUInt(nullptr,16)/100.0;
         d_Ivalue = s_Ivalue.toUInt(nullptr,16)/100.0;
-        d_Pvalue = d_Ivalue * d_Vvalue;
+        d_Pvalue = (d_Ivalue * d_Vvalue)/10.0;
 
         qDebug () << s_Vvalue.toUInt(nullptr,16);
         qDebug()<< "plotting ....."<<d_Vvalue <<"   "<< d_Ivalue<<"   "<< d_Pvalue;
         series1->append(d_Vvalue, d_Ivalue);
         series2->append(d_Vvalue, d_Pvalue);
+        S1_voltages = S1_voltages.mid(5,S1_voltages.size()-1);
+        S1_currents = S1_currents.mid(5,S1_voltages.size()-1);
         break;
 
     case 1 :
@@ -226,12 +228,14 @@ void MainWindow::plottData(int panel_id)
         s_Ivalue = S2_currents.left(4);
         d_Vvalue = s_Vvalue.toUInt(nullptr,16)/100.0;
         d_Ivalue = s_Ivalue.toUInt(nullptr,16)/100.0;
-        d_Pvalue = d_Ivalue * d_Vvalue;
+        d_Pvalue = (d_Ivalue * d_Vvalue)/10.0;
 
         qDebug () << s_Vvalue.toUInt(nullptr,16);
         qDebug()<< "plotting ....."<<d_Vvalue <<"   "<< d_Ivalue<<"   "<< d_Pvalue;
         series3->append(d_Vvalue, d_Ivalue);
         series4->append(d_Vvalue, d_Pvalue);
+        S2_voltages = S2_voltages.mid(5,S2_voltages.size()-1);
+        S2_currents = S2_currents.mid(5,S2_voltages.size()-1);
 //        qDebug()<< "plotting ....."<<S1_voltages.right(5).toDouble() <<"   "<< S1_currents.right(5).toDouble();
 //        series1->append(S1_voltages.right(5).toDouble(), S1_currents.right(5).toDouble());
 //        double p = S1_voltages.right(5).toDouble()*S1_currents.right(5).toDouble();
@@ -294,4 +298,20 @@ void MainWindow::on_pushButton_clicked()
     series3->clear();
     series4->clear();
 
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    double x, y ;
+    x = ui->lineEdit_x->text().toDouble(nullptr);
+    y = ui->lineEdit_y->text().toDouble(nullptr);
+    series1->append(x,y);
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    double x, y ;
+    x = ui->lineEdit_x->text().toDouble(nullptr);
+    y = ui->lineEdit_y->text().toDouble(nullptr);
+    series3->append(x,y);
 }

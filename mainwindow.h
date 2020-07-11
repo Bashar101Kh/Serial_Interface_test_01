@@ -40,10 +40,15 @@ signals:
     void rxData_changed();
 
 
+private slots:
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MainWindow *ui;
     QSerialPort *sp;
-    QByteArray rxdataRow,messureSeries,S1_voltages,S1_currents,S2_current,S2_voltages,S1_powers,S2_powers;
+    QByteArray rxdataRow,messureSeries,S1_voltages,S1_currents,S2_currents,S2_voltages,S1_powers,S2_powers;
     int iX;
     QChart *createLineChart() const;
     QChart *chart1 , *chart2;
