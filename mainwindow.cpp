@@ -133,7 +133,7 @@ void MainWindow::newDataAvailable(){
 void MainWindow::process_rxData(){
     if (rxdataRow.size() > 4){
         int id,i_value;
-        double d_value;
+        double d_value,battery_val_holder;
         QString value,Telegramm;
         qDebug() << "rxdata: " << rxdataRow;
         id = rxdataRow.at(0);
@@ -175,11 +175,11 @@ void MainWindow::process_rxData(){
         break;
 
         case 4:         // Valtage Battary [V]
-
+            ui->bat_V->setText(QString::number(d_value));
             break;
 
         case 5:         // Current Battery[A]
-
+            ui->bat_I->setText(QString::number(d_value));
             break;
 
 
